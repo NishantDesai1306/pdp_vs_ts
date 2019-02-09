@@ -1,12 +1,12 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:pdp_vs_ts/constants/theme.dart';
-import 'package:pdp_vs_ts/helpers/shared_preference_helper.dart';
-import 'package:pdp_vs_ts/pages/about_me.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:dynamic_theme/dynamic_theme.dart";
+import "package:flutter/material.dart";
+import "package:pdp_vs_ts/constants/theme.dart";
+import "package:pdp_vs_ts/helpers/shared_preference_helper.dart";
+import "package:pdp_vs_ts/pages/about_me.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 class SettingsPage extends StatefulWidget {
-  static final String route = '/settings';
+  static final String route = "/settings";
   _SettingsPageState createState() => _SettingsPageState();
 }
 
@@ -87,49 +87,49 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container(
-                        margin: categoryTitleBottomMargin,
-                        child: Text(
-                          "Notification",
-                          style: settingCategoryTitle
-                        ),
-                      ),
+                      // Container(
+                      //   margin: categoryTitleBottomMargin,
+                      //   child: Text(
+                      //     "Notification",
+                      //     style: settingCategoryTitle
+                      //   ),
+                      // ),
 
-                      Container(
-                        margin: settingsTitleBottomMargin,
-                        child: InkWell(
-                          onTap: openNotifyDifferenceModal,
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      margin: settingsTitleBottomMargin,
-                                      child: Text(
-                                        "Notify me when differece goes below",
-                                        style: settingTitle
-                                      ),
-                                    ),
-                                    Container(
-                                      child: Text(
-                                        (subscriberDifference != null ? subscriberDifference.toString() + ' subscribers' : ''),
-                                        style: settingTitle
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                      // Container(
+                      //   margin: settingsTitleBottomMargin,
+                      //   child: InkWell(
+                      //     onTap: openNotifyDifferenceModal,
+                      //     child: Row(
+                      //       children: <Widget>[
+                      //         Expanded(
+                      //           child: Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             children: <Widget>[
+                      //               Container(
+                      //                 margin: settingsTitleBottomMargin,
+                      //                 child: Text(
+                      //                   "Notify me when differece goes below",
+                      //                   style: settingTitle
+                      //                 ),
+                      //               ),
+                      //               Container(
+                      //                 child: Text(
+                      //                   (subscriberDifference != null ? subscriberDifference.toString() + " subscribers" : ""),
+                      //                   style: settingTitle
+                      //                 ),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         )
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
 
-                      Divider(
-                        color: Colors.white,
-                        height: 30,
-                      ),
+                      // Divider(
+                      //   color: Colors.white,
+                      //   height: 30,
+                      // ),
 
                       Container(
                         margin: categoryTitleBottomMargin,
@@ -230,7 +230,7 @@ class SubscriberSettingDialogue extends StatelessWidget {
     return Container(
       child: SimpleDialog(
         titlePadding: EdgeInsets.only(top: spacing, bottom: spacing, left: spacing),
-        title: Text('When to notify', style: textStyle),
+        title: Text("When to notify", style: textStyle),
         contentPadding: EdgeInsets.symmetric(horizontal: spacing),
         children: <Widget>[
           Container(
@@ -264,7 +264,7 @@ class SubscriberSettingDialogue extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context, null);
                   },
-                  child: const Text('Cancel'),
+                  child: const Text("Cancel"),
                 ),
                 RaisedButton(
                   onPressed: () {
@@ -273,7 +273,7 @@ class SubscriberSettingDialogue extends StatelessWidget {
                     Navigator.pop(context, difference);
                   },
                   textColor: Colors.white,
-                  child: const Text('OK'),
+                  child: const Text("OK"),
                 ),
               ],
             ),
