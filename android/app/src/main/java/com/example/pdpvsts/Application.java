@@ -1,6 +1,6 @@
 package com.example.pdpvsts;
 
-import com.transistorsoft.flutter.backgroundfetch.BackgroundFetchPlugin;
+// import com.transistorsoft.flutter.backgroundfetch.BackgroundFetchPlugin;
 import io.flutter.app.FlutterApplication;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.GeneratedPluginRegistrant;
@@ -9,7 +9,7 @@ public class Application  extends FlutterApplication implements PluginRegistry.P
     @Override
     public void onCreate() {
         super.onCreate();
-        BackgroundFetchPlugin.setPluginRegistrant(this);
+        // BackgroundFetchPlugin.setPluginRegistrant(this);
     }
 
     @Override
