@@ -42,7 +42,7 @@ class AboutMePage extends StatelessWidget {
                   child: Container(
                     height: 350,
                     color: theme.primaryColor,
-                    child: Image.network('https://via.placeholder.com/150'),
+                    child: Image.asset('assets/images/logo.png'),
                   ),
                 )
               ],
