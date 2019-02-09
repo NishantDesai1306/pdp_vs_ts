@@ -1,4 +1,4 @@
-package com.example.pdpvsts;
+package com.nishantdesai.pdpvsts;
 
 // import com.transistorsoft.flutter.backgroundfetch.BackgroundFetchPlugin;
 import io.flutter.app.FlutterApplication;
