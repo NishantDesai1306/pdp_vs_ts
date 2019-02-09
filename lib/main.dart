@@ -3,6 +3,7 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:pdp_vs_ts/blocs/internet_connectivity/bloc.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:pdp_vs_ts/constants/theme.dart';
+import 'package:pdp_vs_ts/pages/about_me.dart';
 
 import 'package:pdp_vs_ts/pages/main_page.dart';
 import 'package:pdp_vs_ts/pages/splash_page.dart';
@@ -53,6 +54,7 @@ class MyAppState extends State<MyApp> {
           routes: <String, WidgetBuilder>{
             SplashPage.route: (BuildContext context) => SplashPage(),
             MainPage.route: (BuildContext context) => MainPage(),
+            AboutMePage.route: (BuildContext context) => AboutMePage(),
           }
         );
       }

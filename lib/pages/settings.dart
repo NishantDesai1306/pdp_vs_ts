@@ -2,6 +2,7 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:pdp_vs_ts/constants/theme.dart';
 import 'package:pdp_vs_ts/helpers/shared_preference_helper.dart';
+import 'package:pdp_vs_ts/pages/about_me.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -21,7 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
     SharedPreferences.getInstance()
     .then((SharedPreferences sp) {
       this.setState(() {
-        subscriberDifference = sp.getInt(subscriberDifferencePreferenceKey);
+        subscriberDifference = sp.getInt(subscriberDifferencePreferenceKey) ?? 0;
         hasDarkTheme = sp.getBool(darkThemePreferenceKey) ?? false;
       });
     });
@@ -30,7 +31,9 @@ class _SettingsPageState extends State<SettingsPage> {
   openNotifyDifferenceModal() async {
     int returnedValue = await showDialog<int>(
       context: context,
-      builder: (BuildContext context) => SubscriberSettingDialogue(subscriberDifference: subscriberDifference)
+      builder: (BuildContext context) => SubscriberSettingDialogue(
+        subscriberDifference: subscriberDifference
+      )
     );
 
     if (returnedValue != null && returnedValue > 0) {
@@ -111,7 +114,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     ),
                                     Container(
                                       child: Text(
-                                        (subscriberDifference != null ? subscriberDifference.toString() : '') + ' subscribers',
+                                        (subscriberDifference != null ? subscriberDifference.toString() + ' subscribers' : ''),
                                         style: settingTitle
                                       ),
                                     ),
@@ -136,7 +139,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
 
-                      
                       Container(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,6 +157,38 @@ class _SettingsPageState extends State<SettingsPage> {
                               value: hasDarkTheme,
                             ),
                           ],  
+                        ),
+                      ),
+
+                      Divider(
+                        color: Colors.white,
+                        height: 30,
+                      ),
+
+                      Container(
+                        margin: settingsTitleBottomMargin,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).pushNamed(AboutMePage.route);
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: settingsTitleBottomMargin,
+                                      child: Text(
+                                        "About Me",
+                                        style: settingTitle
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ],
