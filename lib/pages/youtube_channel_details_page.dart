@@ -31,7 +31,7 @@ class YoutubeChannelDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     String formattedSubscriberCount = nf.format(youtubeChannel.subscriberCount).substring(1);
     ThemeData theme = Theme.of(context);
-    double imageDimension = 350;
+    double imageDimension = 400;
     double sliverExapndedHeight = 350;
 
     return Container(
@@ -66,8 +66,8 @@ class YoutubeChannelDetailsPage extends StatelessWidget {
               
                 background: Hero(
                   tag: youtubeChannel.channelId + '_picture',
-                  child: Container(                      
-                    margin: EdgeInsets.only(left: 65, right: 65, top: 50, bottom: 65),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 60, horizontal: 75),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(imageDimension/2),
                       child: TransitionToImage(
