@@ -71,10 +71,20 @@ class _CounterPageState extends State<CounterPage> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    Widget internetConnectivityNotifier = shouldRenderNotifier
-      ? InternetConnectivityNotifier(isConnected: isConnectedToInternet)
-      : Container();
 
+    if (shouldRenderNotifier) {
+      Timer.run(() {
+        String message = isConnectedToInternet
+          ? "You're connected, please wait a few seconds for latest subscriber count"
+          : "You're right now seeing last saved data, to check latest subscriber count connect this device to internet";
+
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text(message),
+          duration: Duration(seconds: 3),
+        ));
+      });
+    }
+    
     return Container(
       color: theme.scaffoldBackgroundColor,
       child: BlocBuilder(
@@ -88,38 +98,45 @@ class _CounterPageState extends State<CounterPage> {
             return FullscreenLoader(messageWidget);
           }
 
+          List<YoutubeChannel> channels = [
+            tSeriesChannel,
+            pewDiePieChannel
+          ];
+
+          channels.sort((YoutubeChannel channelA, YoutubeChannel channelB) {
+            return channelB.subscriberCount - channelA.subscriberCount;
+          });
+
           return Container(
             color: Theme.of(context).backgroundColor,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ChannelUI(youtubeChannel: tSeriesChannel, counterPageBloc: counterPageBloc,)
+                    ChannelUI(youtubeChannel: channels.elementAt(0), counterPageBloc: counterPageBloc,)
                   ],
                 ),
 
-                Expanded(
+                Container(
+                  alignment: Alignment.center,
                   child: Container(
-                    alignment: Alignment.center,
-                    child: Container(
-                      child: DifferenceWidget(
-                        tSeriesChannel: tSeriesChannel,
-                        pewDiePieChannel: pewDiePieChannel,
-                      )
-                    ),
+                    child: DifferenceWidget(
+                      tSeriesChannel: tSeriesChannel,
+                      pewDiePieChannel: pewDiePieChannel,
+                    )
                   ),
                 ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ChannelUI(youtubeChannel: pewDiePieChannel, counterPageBloc: counterPageBloc,)
-                  ],
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ChannelUI(youtubeChannel: channels.elementAt(1), counterPageBloc: counterPageBloc,)
+                    ],
+                  ),
                 ),
-
-                internetConnectivityNotifier
               ]
             )
           );
@@ -289,31 +306,6 @@ class DifferenceWidget extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class InternetConnectivityNotifier extends StatelessWidget {
-  final bool isConnected;
-
-  InternetConnectivityNotifier({
-    Key key,
-    this.isConnected
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    Timer.run(() {
-      String message = isConnected
-        ? "You're connected, please wait a few seconds for latest subscriber count"
-        : "You're right now seeing last saved data, to check latest subscriber count connect this device to internet";
-
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text(message),
-        duration: Duration(seconds: 3),
-      ));
-    });
-
-    return Container();
   }
 }
 
