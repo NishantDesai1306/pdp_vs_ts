@@ -16,7 +16,7 @@
     <application
         tools:replace="android:label"
         android:name=".Application"
-        android:label="pdp_vs_ts"
+        android:label="PewDiePiew vs T-Series"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
