@@ -36,7 +36,7 @@ class _MainPageState extends State<MainPage> {
           iconTheme: theme.iconTheme,
           brightness: Brightness.dark,
           centerTitle: true,
-          title: Text('T-Series vs PewDiePie'),
+          title: Text('PewDiePie vs T-Series'),
           actions: <Widget>[
             Container(
               padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
