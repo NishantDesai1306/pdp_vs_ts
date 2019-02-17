@@ -139,9 +139,9 @@ class _DonationSectionState extends State<DonationSection> {
       await InAppPayments.setSquareApplicationId(SQUARE_APP_ID);
       await InAppPayments.initializeGooglePay(
         SQUARE_LOCATION_ID,
-        SQUARE_ENV == 'test'
-          ? google_pay_constants.environmentTest
-          : google_pay_constants.environmentProduction
+        SQUARE_ENV == 'production'
+          ? google_pay_constants.environmentProduction
+          : google_pay_constants.environmentTest
       );
       
       canUseGooglePay = await InAppPayments.canUseGooglePay;
