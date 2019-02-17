@@ -1,16 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
-import 'package:flutter_advanced_networkimage/transition_to_image.dart';
-import 'package:flutter_youtube/flutter_youtube.dart';
+import 'package:pdp_vs_ts/constants/square.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:intl/intl.dart';
+import 'package:square_in_app_payments/models.dart';
+import 'package:square_in_app_payments/in_app_payments.dart';
+import 'package:square_in_app_payments/google_pay_constants.dart' as google_pay_constants;
 
-import 'package:pdp_vs_ts/models/youtube_channel.dart';
-import 'package:pdp_vs_ts/constants/index.dart';
-
-class AboutMePage extends StatelessWidget {
+class AboutMePage extends StatefulWidget {
   static String route = '/about';
-  AboutMePage();
+  _AboutMePageState createState() => _AboutMePageState();
+}
+double pageSpacing = 10;
+
+class _AboutMePageState extends State<AboutMePage> {
+  _AboutMePageState();
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +28,6 @@ class AboutMePage extends StatelessWidget {
       fontWeight: FontWeight.bold,
       fontSize: 18
     );
-
-    double pageSpacing = 10;
     
     return Container(
       child: Scaffold(
@@ -107,30 +109,7 @@ class AboutMePage extends StatelessWidget {
               ),
             ),
 
-            Container(
-              padding: EdgeInsets.only(left: pageSpacing, right: pageSpacing, bottom: pageSpacing),
-              child: RaisedButton(
-                onPressed: () {
-                  String url = "https://paypal.me/nishant1306/1";
-                  launch(url);
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: pageSpacing),
-                      margin: EdgeInsets.only(right: pageSpacing),
-                      child: Container(
-                        height: 25,
-                        width: 25,
-                        child: Image.asset('assets/images/coffee.png'),
-                      )
-                    ),
-                    Text("Buy me a coffee"),
-                  ],
-                ),
-              ),
-            )
+            DonationSection()
           ],
         ),
       ),
@@ -138,42 +117,144 @@ class AboutMePage extends StatelessWidget {
   }
 }
 
-class TopVideoList extends StatelessWidget {
-  final YoutubeChannel youtubeChannel;
+class DonationSection extends StatefulWidget {
+  @override
+  _DonationSectionState createState() => _DonationSectionState();
+}
 
-  TopVideoList(this.youtubeChannel);
+class _DonationSectionState extends State<DonationSection> {
+  bool _googlePayEnabled = false;
+  int donationAmount = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSquarePayment();
+  }
+
+  void _initSquarePayment() async {
+    bool canUseGooglePay = false;
+
+    if(Platform.isAndroid) {
+      await InAppPayments.setSquareApplicationId(SQUARE_APP_ID);
+      await InAppPayments.initializeGooglePay(
+        SQUARE_LOCATION_ID,
+        SQUARE_ENV == 'test'
+          ? google_pay_constants.environmentTest
+          : google_pay_constants.environmentProduction
+      );
+      
+      canUseGooglePay = await InAppPayments.canUseGooglePay;
+
+      setState(() { 
+        _googlePayEnabled = canUseGooglePay;
+      });
+    }
+  }
+
+  void _onStartGooglePay(int amount) async {
+    try {
+      await InAppPayments.requestGooglePayNonce(
+        priceStatus: google_pay_constants.totalPriceStatusFinal,
+        price: '$amount.00',
+        currencyCode: 'USD',
+        onGooglePayNonceRequestSuccess: _onGooglePayNonceRequestSuccess,
+        onGooglePayNonceRequestFailure: _onGooglePayNonceRequestFailure,
+        onGooglePayCanceled: _onGooglePayCancel);
+    } on InAppPaymentsException catch(ex) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('Error occurred while processing transaction'),
+        duration: Duration(seconds: 3),
+      ));
+    }
+  }
+
+  void _onGooglePayNonceRequestSuccess(CardDetails result) async {
+    String message = 'Thank you for your contribution';
+
+    try {
+      print('complete');
+      print(result);
+    } on Exception catch (ex) {
+      message = 'Error occurred while processing transaction';
+    } finally {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+      ));
+    }
+  }
+
+  void _onGooglePayCancel() {
+    // handle google pay canceled
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text('Tranaction cancelled'),
+      duration: Duration(seconds: 3),
+    ));
+  }
+
+  void _onGooglePayNonceRequestFailure(ErrorInfo errorInfo) {
+    // handle google pay failure
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text('Something went wrong'),
+      duration: Duration(seconds: 3),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    if (!_googlePayEnabled) {
+      return Container();
+    }
 
-    return ListView(
-      scrollDirection: Axis.horizontal,
-      children: youtubeChannel.videos.map((video) {
-        return Container(
-          padding: EdgeInsets.only(right: 20),
-          child: GestureDetector(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: TransitionToImage(
-                AdvancedNetworkImage(video.thumbnail),
-                loadingWidget: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
-                ),
-                fit: BoxFit.cover,
-                height: 25,
-                width: 180,
-              ),
+    return Container(
+      padding: EdgeInsets.only(left: pageSpacing, right: pageSpacing, bottom: pageSpacing),
+      child: Column(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(bottom: pageSpacing),
+            child: RaisedButton(
+              onPressed: () {
+                _onStartGooglePay(1);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: pageSpacing),
+                    margin: EdgeInsets.only(right: pageSpacing),
+                    child: Container(
+                      height: 25,
+                      width: 25,
+                      child: Image.asset('assets/images/coffee.png'),
+                    )
+                  ),
+                  Text("Buy me a coffee (\$1)"),
+                ],
+              )
             ),
-            onTap: () {
-              FlutterYoutube.playYoutubeVideoById(
-                apiKey: YOUTUBE_API_KEY,
-                videoId: video.id,
-              );
-            },
           ),
-        );
-      }).toList()
+
+          Container(
+            child: RaisedButton(
+              onPressed: () {
+                _onStartGooglePay(5);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: pageSpacing),
+                    margin: EdgeInsets.only(right: pageSpacing),
+                    child: Icon(Icons.local_pizza)
+                  ),
+                  Text("Buy me a pizza (\$5)"),
+                ],
+              )
+            ),
+          )
+        ],
+      )
     );
   }
 }

@@ -18,7 +18,13 @@
         tools:replace="android:label"
         android:name=".Application"
         android:label="PewDiePiew vs T-Series"
+        android:theme="@style/AppTheme"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+        
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
