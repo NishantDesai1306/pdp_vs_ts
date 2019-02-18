@@ -1,9 +1,9 @@
 import "package:dynamic_theme/dynamic_theme.dart";
 import "package:flutter/material.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:pdp_vs_ts/constants/theme.dart";
 import "package:pdp_vs_ts/helpers/shared_preference_helper.dart";
 import "package:pdp_vs_ts/pages/about_me.dart";
-import "package:shared_preferences/shared_preferences.dart";
 
 class SettingsPage extends StatefulWidget {
   static final String route = "/settings";
@@ -13,8 +13,10 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   int subscriberDifference;
   bool hasDarkTheme = false;
+  bool screenshotOnLongPress = false;
 
   String subscriberDifferencePreferenceKey = SharedPreferenceHelper.getSubscriberDiffernceKey();
+  String longPressScreenshotPreferenceKey = SharedPreferenceHelper.getLongPressScreenshotKey();
   String darkThemePreferenceKey = SharedPreferenceHelper.getDarkThemeKey();
 
   _SettingsPageState() {
@@ -24,6 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
       this.setState(() {
         subscriberDifference = sp.getInt(subscriberDifferencePreferenceKey) ?? 0;
         hasDarkTheme = sp.getBool(darkThemePreferenceKey) ?? false;
+        screenshotOnLongPress = sp.getBool(longPressScreenshotPreferenceKey) ?? false;
       });
     });
   }
@@ -59,6 +62,17 @@ class _SettingsPageState extends State<SettingsPage> {
 
     setState(() {
       hasDarkTheme = useDarkTheme; 
+    });
+  }
+
+  onLongPressToggleChange(bool takeScreenshotOnLongPress) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    
+    // change theme
+    sp.setBool(longPressScreenshotPreferenceKey, takeScreenshotOnLongPress);
+
+    setState(() {
+      screenshotOnLongPress = takeScreenshotOnLongPress; 
     });
   }
 
@@ -132,14 +146,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       // ),
 
                       Container(
-                        margin: categoryTitleBottomMargin,
-                        child: Text(
-                          "Theme",
-                          style: settingCategoryTitle
-                        ),
-                      ),
-
-                      Container(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -155,6 +161,27 @@ class _SettingsPageState extends State<SettingsPage> {
                               inactiveThumbColor: Colors.white,
                               onChanged: onDarkThemeToggleChange,
                               value: hasDarkTheme,
+                            ),
+                          ],  
+                        ),
+                      ),
+
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              margin: settingsTitleBottomMargin,
+                              child: Text(
+                                "Long press on counter page for screenshot",
+                                style: settingTitle
+                              ),
+                            ),
+                            Switch(
+                              activeColor: hasDarkTheme ? LIGHT_THEME.primaryColor : DARK_THEME.primaryColor,
+                              inactiveThumbColor: Colors.white,
+                              onChanged: onLongPressToggleChange,
+                              value: screenshotOnLongPress,
                             ),
                           ],  
                         ),

@@ -15,6 +15,10 @@ class SharedPreferenceHelper {
     return 'notify-subscriber-difference';
   }
 
+  static String getLongPressScreenshotKey() {
+    return 'long-press-screenshot';
+  }
+
   static String getDarkThemeKey() {
     return 'isDark';
   }

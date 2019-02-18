@@ -1,17 +1,26 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
-import 'package:flutter_advanced_networkimage/transition_to_image.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pdp_vs_ts/blocs/internet_connectivity/bloc.dart';
-import 'package:pdp_vs_ts/blocs/internet_connectivity/state.dart';
+import "dart:async";
+import "dart:io";
+import "package:flutter/material.dart";
+import "dart:typed_data";
+import "dart:ui" as ui;
+import "package:flutter/rendering.dart";
+import "package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart";
+import "package:simple_permissions/simple_permissions.dart";
+import "package:flutter_advanced_networkimage/transition_to_image.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
+import "package:share_extend/share_extend.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
-import 'package:pdp_vs_ts/models/youtube_channel.dart';
-import 'package:pdp_vs_ts/widgets/counter.dart';
-import 'package:pdp_vs_ts/constants/index.dart';
-import 'package:pdp_vs_ts/pages/youtube_channel_details_page.dart';
-import 'package:pdp_vs_ts/blocs/counter_page/bloc.dart';
-import 'package:pdp_vs_ts/blocs/counter_page/state.dart';
+import "package:pdp_vs_ts/blocs/internet_connectivity/bloc.dart";
+import "package:pdp_vs_ts/blocs/internet_connectivity/state.dart";
+
+import "package:pdp_vs_ts/models/youtube_channel.dart";
+import "package:pdp_vs_ts/widgets/counter.dart";
+import "package:pdp_vs_ts/constants/index.dart";
+import "package:pdp_vs_ts/pages/youtube_channel_details_page.dart";
+import "package:pdp_vs_ts/blocs/counter_page/bloc.dart";
+import "package:pdp_vs_ts/blocs/counter_page/state.dart";
+import "package:pdp_vs_ts/helpers/shared_preference_helper.dart";
 
 class CounterPage extends StatefulWidget {
   _CounterPageState createState() => _CounterPageState();
@@ -21,6 +30,7 @@ class _CounterPageState extends State<CounterPage> {
   final CounterPageBloc counterPageBloc = CounterPageBloc();
   final InternetChangeListener internetChangeListener = InternetChangeListener();
   InternetState internetState = InternetState();
+  static GlobalKey widgetContainerKey = new GlobalKey();
 
   bool isConnectedToInternet = false;
   bool shouldRenderNotifier = false;
@@ -29,7 +39,7 @@ class _CounterPageState extends State<CounterPage> {
   final textStyle = TextStyle(
     fontSize: 25.0,
     fontWeight: FontWeight.bold,
-    fontFamily: 'Roboto'
+    fontFamily: "Roboto"
   );
 
   _CounterPageState() {
@@ -68,6 +78,79 @@ class _CounterPageState extends State<CounterPage> {
     }
   }
 
+  Future<bool> askPermissionIfRequired(Permission permission, String errorMessage) async {
+    bool hasPermission = await SimplePermissions.checkPermission(permission);
+
+    if (!hasPermission) {
+      // if app does not have required permission then ask for it
+      PermissionStatus result = await SimplePermissions.requestPermission(permission);
+
+      if (result != PermissionStatus.authorized) {
+        // if user has not given permission then show error message
+        showSnackBar(message: "Please autorize this app to write on storgae");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  takeScreenShot() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    String preferenceKey =SharedPreferenceHelper.getLongPressScreenshotKey();
+    bool isSafeToProceed = sp.getBool(preferenceKey) ?? false;
+    
+    if (!isSafeToProceed) {
+      return;
+    }
+
+    isSafeToProceed = await askPermissionIfRequired(Permission.WriteExternalStorage, "Please autorize this app to write on storage");
+
+    if (!isSafeToProceed) {
+      return;
+    }
+
+    isSafeToProceed = await askPermissionIfRequired(Permission.ReadExternalStorage, "Please autorize this app to read from storage");
+
+    if (!isSafeToProceed) {
+      return;
+    }
+
+    // if directory does not exists then create it
+    Directory dir = new Directory(BASE_FOLDER_PATH);
+
+    if (!dir.existsSync()) {
+      dir.createSync();
+    }
+
+    // genereate data for screenshot
+    RenderRepaintBoundary boundary = widgetContainerKey.currentContext.findRenderObject();
+    ui.Image image = await boundary.toImage();
+    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData.buffer.asUint8List();
+    String timeStamp =DateTime.now().toString().substring(0, 18);
+    String screenshotPath = "$BASE_FOLDER_PATH/screenshot $timeStamp.png";
+    File imgFile = new File(screenshotPath);
+    
+    // write screenshot image
+    await imgFile.writeAsBytes(pngBytes);
+
+    // notify user and open share popup
+    showSnackBar(message: "Screenshot saved successfully");
+    ShareExtend.share(imgFile.path, "image");
+  }
+
+  showSnackBar({String message, int seconds = 3}) {
+    if (message == null || message.length < 1) {
+      return;
+    }
+
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: seconds)
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -78,14 +161,11 @@ class _CounterPageState extends State<CounterPage> {
           ? "You're connected, please wait a few seconds for latest subscriber count"
           : "You're right now seeing last saved data, to check latest subscriber count connect this device to internet";
 
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text(message),
-          duration: Duration(seconds: 3),
-        ));
+        showSnackBar(message: message);
       });
     }
     
-    return Container(
+    Widget screenUI = Container(
       color: theme.scaffoldBackgroundColor,
       child: BlocBuilder(
         bloc: counterPageBloc,
@@ -94,7 +174,7 @@ class _CounterPageState extends State<CounterPage> {
           YoutubeChannel pewDiePieChannel = mainCounterPageState.getChannel(PEW_DIE_PIE_CHANNEL_ID);
 
           if (tSeriesChannel == null || pewDiePieChannel == null) {
-            Widget messageWidget = Text('Loading data...', style: textStyle);
+            Widget messageWidget = Text("Loading data...", style: textStyle);
             return FullscreenLoader(messageWidget);
           }
 
@@ -143,6 +223,14 @@ class _CounterPageState extends State<CounterPage> {
         }
       ),
     );
+
+    return GestureDetector(
+      child: RepaintBoundary(
+        key: widgetContainerKey,
+        child: screenUI
+      ),
+      onLongPress: takeScreenShot,
+    );
   }
 
   @override
@@ -157,7 +245,7 @@ class ChannelUI extends StatelessWidget {
   final textStyle = TextStyle(
     fontSize: 25.0,
     fontWeight: FontWeight.bold,
-    fontFamily: 'Roboto'
+    fontFamily: "Roboto"
   );
   final defaultMargin = EdgeInsets.fromLTRB(0, 10, 0, 0);
   final CounterPageBloc counterPageBloc;
@@ -194,7 +282,7 @@ class ChannelUI extends StatelessWidget {
             child: Container(
               alignment: Alignment.center,
               child: Hero(
-                tag: channelId + '_picture',
+                tag: channelId + "_picture",
                 child: GestureDetector(
                   child: Container(
                     decoration: BoxDecoration(
@@ -271,18 +359,18 @@ class DifferenceWidget extends StatelessWidget {
     }
 
     int difference = pewDiePieChannel.subscriberCount - tSeriesChannel.subscriberCount;
-    String differenceText = '';
+    String differenceText = "";
 
     if (difference == 0) {
-      differenceText = tSeriesChannel.channelName + ' and ' + pewDiePieChannel.channelName + ' has same number of subscribers';
+      differenceText = tSeriesChannel.channelName + " and " + pewDiePieChannel.channelName + " has same number of subscribers";
 
       return Text(differenceText);
     }
     else if (difference > 0) {
-      differenceText = pewDiePieChannel.channelName + ' is ahead by';
+      differenceText = pewDiePieChannel.channelName + " is ahead by";
     }
     else if (difference < 0) {
-      differenceText = tSeriesChannel.channelName + ' is ahead by';
+      differenceText = tSeriesChannel.channelName + " is ahead by";
     }
 
     TextStyle textStyle = new TextStyle(
@@ -300,9 +388,9 @@ class DifferenceWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(differenceText + ' ', style: textStyle),
+          Text(differenceText + " ", style: textStyle),
           Counter(value: difference, textStyle: textStyle),
-          Text(' subscribers.', style: textStyle),
+          Text(" subscribers.", style: textStyle),
         ],
       ),
     );

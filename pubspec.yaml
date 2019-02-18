@@ -20,11 +20,13 @@ dependencies:
   shared_preferences: ^0.4.3
   # background_fetch: '^0.1.0'
   flutter_advanced_networkimage: any
-  flutter_youtube: "^1.1.4"
   connectivity: ^0.3.2
   flutter_bloc: ^0.5.0
   url_launcher: ^4.2.0
   dynamic_theme: ^1.0.0
+  simple_permissions: "^0.1.2"
+  share_extend: ^1.0.3
+
   # square_in_app_payments: ^1.0.3
 
   # The following adds the Cupertino Icons font to your application.

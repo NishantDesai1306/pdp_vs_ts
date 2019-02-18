@@ -38,13 +38,10 @@ class _MainPageState extends State<MainPage> {
           centerTitle: true,
           title: Text('PewDiePie vs T-Series'),
           actions: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-              child: IconButton(
-                tooltip: 'App Settings',
-                onPressed: toggleSettingsPage,
-                icon: Icon(isSettingsOpen ? Icons.close : Icons.settings),
-              ),
+            IconButton(
+              tooltip: 'App Settings',
+              onPressed: toggleSettingsPage,
+              icon: Icon(isSettingsOpen ? Icons.close : Icons.settings),
             )
           ],
         ),
