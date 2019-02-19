@@ -8,3 +8,4 @@ const String TSERIES_LOGO_URL = 'https://upload.wikimedia.org/wikipedia/en/thumb
 const int VIDEO_LIST_SIZE = 5;
 
 const String BASE_FOLDER_PATH = 'storage/emulated/0/PewDiePiew vs TSeries';
+const String PLAY_STORE_LINK = 'https://play.google.com/store/apps/details?id=com.nishantdesai.pdpvsts';
