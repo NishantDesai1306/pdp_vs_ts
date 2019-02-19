@@ -209,65 +209,73 @@ class _CounterPageState extends State<CounterPage> {
     
     Widget screenUI = Container(
       color: theme.scaffoldBackgroundColor,
-      child: BlocBuilder(
-        bloc: counterPageBloc,
-        builder: (context, CounterPageState mainCounterPageState) {
-          YoutubeChannel tSeriesChannel = mainCounterPageState.getChannel(TSERIES_CHANNEL_ID);
-          YoutubeChannel pewDiePieChannel = mainCounterPageState.getChannel(PEW_DIE_PIE_CHANNEL_ID);
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: SingleChildScrollView(
+              child: BlocBuilder(
+                bloc: counterPageBloc,
+                builder: (context, CounterPageState mainCounterPageState) {
+                  YoutubeChannel tSeriesChannel = mainCounterPageState.getChannel(TSERIES_CHANNEL_ID);
+                  YoutubeChannel pewDiePieChannel = mainCounterPageState.getChannel(PEW_DIE_PIE_CHANNEL_ID);
 
-          if (
-            tSeriesChannel == null ||
-            tSeriesChannel.subscriberCount == null ||
-            pewDiePieChannel == null ||
-            pewDiePieChannel.subscriberCount == null
-          ) {
-            Widget messageWidget = Text("Loading data...", style: textStyle);
-            return FullscreenLoader(messageWidget);
-          }
+                  if (
+                    tSeriesChannel == null ||
+                    tSeriesChannel.subscriberCount == null ||
+                    pewDiePieChannel == null ||
+                    pewDiePieChannel.subscriberCount == null
+                  ) {
+                    Widget messageWidget = Text("Loading data...", style: textStyle);
+                    return FullscreenLoader(messageWidget);
+                  }
 
-          List<YoutubeChannel> channels = [
-            tSeriesChannel,
-            pewDiePieChannel
-          ];
+                  List<YoutubeChannel> channels = [
+                    tSeriesChannel,
+                    pewDiePieChannel
+                  ];
 
-          channels.sort((YoutubeChannel channelA, YoutubeChannel channelB) {
-            return channelB.subscriberCount - channelA.subscriberCount;
-          });
+                  channels.sort((YoutubeChannel channelA, YoutubeChannel channelB) {
+                    return channelB.subscriberCount - channelA.subscriberCount;
+                  });
 
-          return Container(
-            color: Theme.of(context).backgroundColor,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ChannelUI(youtubeChannel: channels.elementAt(0), counterPageBloc: counterPageBloc,)
-                  ],
-                ),
+                  return Container(
+                    color: Theme.of(context).backgroundColor,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            ChannelUI(youtubeChannel: channels.elementAt(0), counterPageBloc: counterPageBloc,)
+                          ],
+                        ),
 
-                Container(
-                  alignment: Alignment.center,
-                  child: Container(
-                    child: DifferenceWidget(
-                      tSeriesChannel: tSeriesChannel,
-                      pewDiePieChannel: pewDiePieChannel,
+                        Container(
+                          alignment: Alignment.center,
+                          child: Container(
+                            child: DifferenceWidget(
+                              tSeriesChannel: tSeriesChannel,
+                              pewDiePieChannel: pewDiePieChannel,
+                            )
+                          ),
+                        ),
+
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              ChannelUI(youtubeChannel: channels.elementAt(1), counterPageBloc: counterPageBloc,)
+                            ],
+                          ),
+                        ),
+                      ]
                     )
-                  ),
-                ),
-
-                Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      ChannelUI(youtubeChannel: channels.elementAt(1), counterPageBloc: counterPageBloc,)
-                    ],
-                  ),
-                ),
-              ]
+                  );
+                }
+              ),
             )
-          );
-        }
+          ),
+        ],
       ),
     );
 
@@ -431,14 +439,14 @@ class DifferenceWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(5.0)
       ),
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(differenceText + " ", style: textStyle),
-          Counter(value: difference, textStyle: textStyle),
-          Text(" subscribers.", style: textStyle),
-        ],
+      child: Container(
+        child: Wrap(
+          children: <Widget>[
+            Text(differenceText + " ", style: textStyle),
+            Counter(value: difference, textStyle: textStyle),
+            Text(" subscribers.", style: textStyle),
+          ],
+        ),
       ),
     );
   }

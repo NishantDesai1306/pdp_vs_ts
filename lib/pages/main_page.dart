@@ -121,10 +121,8 @@ class _MainPagePanels extends State<MainPagePanels> with SingleTickerProviderSta
 
           PositionedTransition(
             rect: getPanelAnimation(boxConstrainsts),
-            child: Container(
-              child: CounterPage(
-                isSettingsOpen: widget.panelToRender == MainPagePanels.SETTINGS_PANEL
-              )
+            child: CounterPage(
+              isSettingsOpen: widget.panelToRender == MainPagePanels.SETTINGS_PANEL
             ),
           )
         ],
