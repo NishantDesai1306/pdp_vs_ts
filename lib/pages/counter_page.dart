@@ -95,22 +95,78 @@ class _CounterPageState extends State<CounterPage> {
     return true;
   }
 
-  takeScreenShot() async {
+  Future<bool> confirmAboutScreenshot() async {
     SharedPreferences sp = await SharedPreferences.getInstance();
-    String preferenceKey =SharedPreferenceHelper.getLongPressScreenshotKey();
-    bool isSafeToProceed = sp.getBool(preferenceKey) ?? false;
+    String key = SharedPreferenceHelper.getLongPressScreenshotKey();
+    bool dontShowAgainValue = sp.getBool(key) ?? null;
+
+    // if user has checked dont show again last time then send the value that was selected last time
+    if (dontShowAgainValue != null) {
+      return dontShowAgainValue;
+    }
+
+    bool returnValue = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) => ConfrimScreenshotDialog(dontShowAgainPreferenceKey: key)
+    );
+
+    if (false == returnValue) {
+      showSnackBar(
+        message: "Screenshot cancelled"
+      );
+    }
+
+    return returnValue;
+  }
+
+  Future<bool> checkPermissions() async {
+    bool isSafeToProceed = false;
+
+    isSafeToProceed = await confirmAboutScreenshot();
+
+    if (!isSafeToProceed) {
+      return false;
+    }
+
+    isSafeToProceed = await askPermissionIfRequired(
+      Permission.WriteExternalStorage,
+      "Please autorize this app to write on storage"
+    );
+
+    if (!isSafeToProceed) {
+      return false;
+    }
+
+    isSafeToProceed = await askPermissionIfRequired(
+      Permission.ReadExternalStorage, 
+      "Please autorize this app to read from storage"
+    );
+
+    if (!isSafeToProceed) {
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<File> storeScreenShot() async {
+    // genereate data for screenshot
+    RenderRepaintBoundary boundary = widgetContainerKey.currentContext.findRenderObject();
+    ui.Image image = await boundary.toImage();
+    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List pngBytes = byteData.buffer.asUint8List();
+    String timeStamp =DateTime.now().toString().substring(0, 18);
+    String screenshotPath = "$BASE_FOLDER_PATH/screenshot $timeStamp.png";
+    File screenshotImage = new File(screenshotPath);
     
-    if (!isSafeToProceed) {
-      return;
-    }
+    // write screenshot image
+    await screenshotImage.writeAsBytes(pngBytes);
 
-    isSafeToProceed = await askPermissionIfRequired(Permission.WriteExternalStorage, "Please autorize this app to write on storage");
+    return screenshotImage;
+  }
 
-    if (!isSafeToProceed) {
-      return;
-    }
-
-    isSafeToProceed = await askPermissionIfRequired(Permission.ReadExternalStorage, "Please autorize this app to read from storage");
+  takeScreenShot() async {
+    bool isSafeToProceed = await checkPermissions();
 
     if (!isSafeToProceed) {
       return;
@@ -123,21 +179,11 @@ class _CounterPageState extends State<CounterPage> {
       dir.createSync();
     }
 
-    // genereate data for screenshot
-    RenderRepaintBoundary boundary = widgetContainerKey.currentContext.findRenderObject();
-    ui.Image image = await boundary.toImage();
-    ByteData byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    Uint8List pngBytes = byteData.buffer.asUint8List();
-    String timeStamp =DateTime.now().toString().substring(0, 18);
-    String screenshotPath = "$BASE_FOLDER_PATH/screenshot $timeStamp.png";
-    File imgFile = new File(screenshotPath);
-    
-    // write screenshot image
-    await imgFile.writeAsBytes(pngBytes);
+    File savedImage = await storeScreenShot();
 
     // notify user and open share popup
     showSnackBar(message: "Screenshot saved successfully");
-    ShareExtend.share(imgFile.path, "image");
+    ShareExtend.share(savedImage.path, "image");
   }
 
   showSnackBar({String message, int seconds = 3}) {
@@ -422,6 +468,93 @@ class FullscreenLoader extends StatelessWidget {
           ],
         )
       ],
+    );
+  }
+}
+
+class ConfrimScreenshotDialog extends StatefulWidget {
+  final String dontShowAgainPreferenceKey;
+
+  ConfrimScreenshotDialog({
+    this.dontShowAgainPreferenceKey
+  });
+
+  @override
+  State<ConfrimScreenshotDialog> createState() => ConfrimScreenshotDialogState();
+}
+class ConfrimScreenshotDialogState extends State<ConfrimScreenshotDialog> {
+  bool dontShowAgain = false;
+
+  ConfrimScreenshotDialogState();
+
+  handleDontShowAgainChange(bool isChecked) {
+    setState(() {
+      dontShowAgain = isChecked;
+    });
+  }
+
+  setPreferenceAndReturn(bool isChecked) async {
+    if (dontShowAgain) {
+      SharedPreferences sp = await SharedPreferences.getInstance();
+      sp.setBool(widget.dontShowAgainPreferenceKey, isChecked);
+    }
+
+    return Navigator.of(context).pop(isChecked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    TextStyle textStyle =TextStyle(
+      color: theme.textTheme.body1.color
+    );
+
+    return Container(
+      child: SimpleDialog(
+        title: Text("Press and Hold Screenshot", style: textStyle),
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: <Widget>[
+                Text("Do you want to share a screenshot of current subscriber count ?", style: textStyle),
+
+                Row(
+                  children: <Widget>[
+                    Switch(
+                      activeColor: theme.primaryColor,
+                      inactiveThumbColor: Colors.white,
+                      inactiveTrackColor: Colors.grey,
+                      onChanged: handleDontShowAgainChange,
+                      value: dontShowAgain,
+                    ),
+                    Text("Don't ask me again", style: textStyle)
+                  ],
+                )
+              ],
+            ),
+          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              FlatButton(
+                child: Text("Yes", style: textStyle),
+                onPressed: () {
+                  setPreferenceAndReturn(true);
+                },
+              ),
+
+              FlatButton(
+                child: Text("No", style: textStyle),
+                onPressed: () {
+                  setPreferenceAndReturn(false);
+                },
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
