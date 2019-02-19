@@ -23,6 +23,12 @@ import "package:pdp_vs_ts/blocs/counter_page/state.dart";
 import "package:pdp_vs_ts/helpers/shared_preference_helper.dart";
 
 class CounterPage extends StatefulWidget {
+  final bool isSettingsOpen;
+
+  CounterPage({
+    this.isSettingsOpen
+  });
+
   _CounterPageState createState() => _CounterPageState();
 }
 
@@ -34,7 +40,6 @@ class _CounterPageState extends State<CounterPage> {
 
   bool isConnectedToInternet = false;
   bool shouldRenderNotifier = false;
-  bool isSettingsOpen = false;
   
   final textStyle = TextStyle(
     fontSize: 25.0,
@@ -63,19 +68,6 @@ class _CounterPageState extends State<CounterPage> {
   void reloadSubscriberCount(Timer timer) {
     shouldRenderNotifier = false;
     counterPageBloc.updateAllSubscriberCounts();
-  }
-
-  void toggleSettingsPage() {
-    if (isSettingsOpen) {
-      this.setState(() {
-        isSettingsOpen = false;
-      });
-    }
-    else {
-      this.setState(() {
-        isSettingsOpen = true;
-      });
-    }
   }
 
   Future<bool> askPermissionIfRequired(Permission permission, String errorMessage) async {
@@ -166,6 +158,10 @@ class _CounterPageState extends State<CounterPage> {
   }
 
   takeScreenShot() async {
+    if (widget.isSettingsOpen) {
+      return;
+    }
+
     bool isSafeToProceed = await checkPermissions();
 
     if (!isSafeToProceed) {
@@ -219,7 +215,12 @@ class _CounterPageState extends State<CounterPage> {
           YoutubeChannel tSeriesChannel = mainCounterPageState.getChannel(TSERIES_CHANNEL_ID);
           YoutubeChannel pewDiePieChannel = mainCounterPageState.getChannel(PEW_DIE_PIE_CHANNEL_ID);
 
-          if (tSeriesChannel == null || pewDiePieChannel == null) {
+          if (
+            tSeriesChannel == null ||
+            tSeriesChannel.subscriberCount == null ||
+            pewDiePieChannel == null ||
+            pewDiePieChannel.subscriberCount == null
+          ) {
             Widget messageWidget = Text("Loading data...", style: textStyle);
             return FullscreenLoader(messageWidget);
           }
