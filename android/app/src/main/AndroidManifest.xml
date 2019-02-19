@@ -8,6 +8,8 @@
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -18,7 +20,6 @@
         tools:replace="android:label"
         android:name=".Application"
         android:label="PewDiePiew vs T-Series"
-        android:theme="@style/AppTheme"
         android:icon="@mipmap/ic_launcher">
 
         <meta-data

@@ -49,60 +49,62 @@ class _AboutMePageState extends State<AboutMePage> {
             ),
 
             Expanded(
-              child: Container(
-                padding: EdgeInsets.all(pageSpacing),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(bottom: pageSpacing),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'About app:',
-                            style: titleTextStyle,
-                          ),
-                          Text(
-                            'This app is result of a pet project that I created in order to learn basics of Flutter SDK.',
-                            style: textStyle,
-                          )
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Developer:',
-                            style: titleTextStyle,
-                          ),
-                          Text(
-                            'Nishant Desai',
-                            style: textStyle,
-                          ),
-                          InkWell(
-                            onTap: () {
-                              String url = "mailto:nishantdesai1306@gmail.com";
-                              launch(url);
-                            },
-                            child: Text(
-                              'nishantdesai1306@gmail.com',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 18,
-                                textBaseline: TextBaseline.ideographic
-                              ),
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.all(pageSpacing),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(bottom: pageSpacing),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'About app:',
+                              style: titleTextStyle,
                             ),
-                          )
-                        ],
+                            Text(
+                              'This app is result of a pet project that I created in order to learn basics of Flutter SDK.',
+                              style: textStyle,
+                            )
+                          ],
+                        ),
                       ),
-                    )
 
-                    
-                  ],
+                      Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Developer:',
+                              style: titleTextStyle,
+                            ),
+                            Text(
+                              'Nishant Desai',
+                              style: textStyle,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                String url = "mailto:nishantdesai1306@gmail.com";
+                                launch(url);
+                              },
+                              child: Text(
+                                'nishantdesai1306@gmail.com',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 18,
+                                  textBaseline: TextBaseline.ideographic
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+
+                      
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -124,7 +126,7 @@ class _DonationSectionState extends State<DonationSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left:pageSpacing, right: pageSpacing),
+      margin: EdgeInsets.only(left:pageSpacing, right: pageSpacing, bottom: pageSpacing/2),
       child: OutlineButton(
         borderSide: BorderSide(
           width: 1,

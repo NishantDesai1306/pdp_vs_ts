@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:flutter_advanced_networkimage/transition_to_image.dart';
-import 'package:flutter_youtube/flutter_youtube.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
 
 import 'package:pdp_vs_ts/models/youtube_channel.dart';
-import 'package:pdp_vs_ts/constants/index.dart';
 
 const PEW_DIE_PIE_DECSRIPTION = "Felix Arvid Ulf Kjellberg known online as PewDiePie, is a Swedish YouTuber, comedian and video game commentator, formerly best known for his Let's Play commentaries and now mostly known for his comedic formatted shows. \n\n On 15 August 2013, PewDiePie became the most-subscribed user on YouTube, being briefly surpassed in late 2013 by YouTube Spotlight. After regaining the top position on 23 December 2013 the channel has now amassed over 79 million subscribers as of December 2018. From 29 December 2014 to 14 February 2017, PewDiePie's channel held the distinction of being the most-viewed YouTube channel, and as of November 2018, the channel has received over 19 billion video views.";
 const T_SERIES_DESCRIPTION = "T-Series is an Indian music record label and film production company founded by Gulshan Kumar in 1983. It is primarily known for Bollywood music soundtracks and Indi-pop music. As of 2017, T-Series is one of the largest Indian music record labels, along with Zee Music and Sony Music India.\n\nThe T-Series YouTube channel, run by a small team of 13 people, primarily shows music videos and occasionally film trailers. It is the most-viewed YouTube channel, with over 56 billion views as of 19 December 2018. With over 77 million subscribers as of 30 December 2018, it also ranks as the second most-subscribed channel behind PewDiePie. In addition, T-Series has a multi-channel network, with 29 channels that have more than 100 million YouTube subscribers as of November 2018 and 61.5 billion views as of August 2018.";
@@ -170,10 +168,8 @@ class TopVideoList extends StatelessWidget {
               ),
             ),
             onTap: () {
-              FlutterYoutube.playYoutubeVideoById(
-                apiKey: YOUTUBE_API_KEY,
-                videoId: video.id,
-              );
+              String url = 'https://www.youtube.com/watch?v=${video.id}';
+              launch(url);
             },
           ),
         );

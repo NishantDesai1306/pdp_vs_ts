@@ -1,9 +1,11 @@
 import "package:dynamic_theme/dynamic_theme.dart";
 import "package:flutter/material.dart";
+import 'package:pdp_vs_ts/constants/index.dart';
+import 'package:share_extend/share_extend.dart';
+import "package:shared_preferences/shared_preferences.dart";
 import "package:pdp_vs_ts/constants/theme.dart";
 import "package:pdp_vs_ts/helpers/shared_preference_helper.dart";
 import "package:pdp_vs_ts/pages/about_me.dart";
-import "package:shared_preferences/shared_preferences.dart";
 
 class SettingsPage extends StatefulWidget {
   static final String route = "/settings";
@@ -181,6 +183,33 @@ class _SettingsPageState extends State<SettingsPage> {
                                       margin: settingsTitleBottomMargin,
                                       child: Text(
                                         "About Me",
+                                        style: settingTitle
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      Container(
+                        margin: settingsTitleBottomMargin,
+                        child: InkWell(
+                          onTap: () {
+                            ShareExtend.share(PLAY_STORE_LINK, "text");
+                          },
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: settingsTitleBottomMargin,
+                                      child: Text(
+                                        "Share App",
                                         style: settingTitle
                                       ),
                                     ),

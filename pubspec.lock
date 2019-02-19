@@ -95,13 +95,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_youtube:
-    dependency: "direct main"
-    description:
-      name: flutter_youtube
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.4"
   http:
     dependency: "direct main"
     description:
@@ -165,6 +158,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.20.0"
+  share_extend:
+    dependency: "direct main"
+    description:
+      name: share_extend
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -172,6 +172,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.3"
+  simple_permissions:
+    dependency: "direct main"
+    description:
+      name: simple_permissions
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.9"
   sky_engine:
     dependency: transitive
     description: flutter
