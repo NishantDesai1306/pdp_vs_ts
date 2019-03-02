@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_statusbar_manager/flutter_statusbar_manager.dart';
 import 'package:pdp_vs_ts/blocs/internet_connectivity/bloc.dart';
 import 'package:pdp_vs_ts/blocs/internet_connectivity/state.dart';
+import 'package:pdp_vs_ts/blocs/status_bar/state.dart';
 import 'package:pdp_vs_ts/pages/main_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -13,17 +15,22 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   InternetChangeListener internetChangeListener = InternetChangeListener();
   InternetState internetState = InternetState();
+  StatusBarState statusBarState = StatusBarState();
   StreamSubscription internetChangeSubscription;
 
   _SplashPageState() {
-    if (internetState.isReady) {
-      goToMainPage();
-    }
-
-    internetChangeSubscription = internetChangeListener.onChange.listen((data) {
+    FlutterStatusbarManager.getHeight.then((double height) {
+      statusBarState.setHeight(height);
+      
       if (internetState.isReady) {
         goToMainPage();
       }
+
+      internetChangeSubscription = internetChangeListener.onChange.listen((data) {
+        if (internetState.isReady) {
+          goToMainPage();
+        }
+      });
     });
   }
 

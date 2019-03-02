@@ -4,9 +4,7 @@ import "package:flutter/material.dart";
 import "dart:typed_data";
 import "dart:ui" as ui;
 import "package:flutter/rendering.dart";
-import "package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart";
 import "package:simple_permissions/simple_permissions.dart";
-import "package:flutter_advanced_networkimage/transition_to_image.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:share_extend/share_extend.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -242,7 +240,10 @@ class _CounterPageState extends State<CounterPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ChannelUI(youtubeChannel: channels.elementAt(0), counterPageBloc: counterPageBloc,)
+                    ChannelUI(
+                      youtubeChannel: channels.elementAt(0),
+                      counterPageBloc: counterPageBloc
+                    )
                   ],
                 ),
 
@@ -260,7 +261,10 @@ class _CounterPageState extends State<CounterPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      ChannelUI(youtubeChannel: channels.elementAt(1), counterPageBloc: counterPageBloc,)
+                      ChannelUI(
+                        youtubeChannel: channels.elementAt(1),
+                        counterPageBloc: counterPageBloc
+                      )
                     ],
                   ),
                 ),
@@ -311,10 +315,11 @@ class ChannelUI extends StatelessWidget {
     int subscriberCount = youtubeChannel.subscriberCount;
 
     ThemeData theme = Theme.of(context);
-    double imageDimension = 160;
+    double width = MediaQuery.of(context).size.width;
+    double imageDimension = width * 0.4;
     double borderWidth = 5;
 
-    if (profilePictureUrl == null) {
+    if (channelName == null) {
       return Container();
     }
 
@@ -339,16 +344,7 @@ class ChannelUI extends StatelessWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(imageDimension/2),
-                      child: TransitionToImage(
-                        AdvancedNetworkImage(profilePictureUrl, useDiskCache: true),
-                        loadingWidget: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
-                        ),
-                        fit: BoxFit.cover,
-                        placeholder: Icon(Icons.refresh),
-                        width: imageDimension,
-                        height: imageDimension,
-                      ),
+                      child: YoutubeChannel.getProfilePicture(channelId, imageDimension),
                     ),
                   ),
                   onDoubleTap: () {
