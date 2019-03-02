@@ -157,17 +157,31 @@ class TopVideoList extends StatelessWidget {
         return Container(
           padding: EdgeInsets.only(right: 20),
           child: GestureDetector(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(5),
-              child: TransitionToImage(
-                AdvancedNetworkImage(video.thumbnail),
-                loadingWidget: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(5),
+                  child: Opacity(
+                    opacity: 0.75,
+                    child: Container(
+                      child: TransitionToImage(
+                        AdvancedNetworkImage(video.thumbnail),
+                        loadingWidget: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(theme.primaryColor),
+                        ),
+                        fit: BoxFit.cover,
+                        width: 180,
+                      ),
+                    ),
+                  ),
                 ),
-                fit: BoxFit.cover,
-                height: 25,
-                width: 180,
-              ),
+                Icon(
+                  Icons.play_circle_filled,
+                  color: Colors.black,
+                  size: 35,
+                )
+              ],
             ),
             onTap: () {
               String url = 'https://www.youtube.com/watch?v=${video.id}';
