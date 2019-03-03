@@ -536,18 +536,18 @@ class ConfrimScreenshotDialogState extends State<ConfrimScreenshotDialog> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               FlatButton(
-                child: Text("Yes", style: textStyle),
-                onPressed: () {
-                  setPreferenceAndReturn(true);
-                },
-              ),
-
-              FlatButton(
                 child: Text("No", style: textStyle),
                 onPressed: () {
                   setPreferenceAndReturn(false);
                 },
               ),
+
+              FlatButton(
+                child: Text("Yes", style: textStyle),
+                onPressed: () {
+                  setPreferenceAndReturn(true);
+                },
+              )
             ],
           )
         ],
