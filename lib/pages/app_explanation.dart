@@ -7,11 +7,13 @@ import 'package:pdp_vs_ts/helpers/shared_preference_helper.dart';
 import 'package:pdp_vs_ts/pages/main_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+Duration pageChangeAnimationDuration = Duration(milliseconds: 250); 
+Curve pageChangeAnimationCurve = Curves.linear;
+
 class AppExplanation extends StatefulWidget {
   static String route = '/explanation';
   _AppExplanationState createState() => _AppExplanationState();
 }
-
 class _AppExplanationState extends State<AppExplanation> {
   int _currentPage = 0;  
 
@@ -78,22 +80,28 @@ class _AppExplanationState extends State<AppExplanation> {
                 children: <Widget>[
                   slider,
 
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.white,
-                    ),
-                    padding: EdgeInsets.all(10),
-                    alignment: Alignment.center,
-                    height: 100,  // just a hack so that height does not changes when text gets wrapped in smaller screens
-                    child: Text(
-                      message,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: theme.primaryColor,
-                        fontSize: 20
-                      )
-                    ),
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        height: 100,
+                        margin: EdgeInsets.only(bottom: 20),
+                        alignment: Alignment.center,
+                        child: Text(
+                          message,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: theme.primaryColor,
+                            fontSize: 20
+                          )
+                        ),
+                      ),
+
+                      PageIndicator(slider: slider, currentPage: _currentPage)
+                    ],
                   )
                 ],
               ),
@@ -111,14 +119,70 @@ class _AppExplanationState extends State<AppExplanation> {
   }
 }
 
+class PageIndicator extends StatelessWidget {
+  const PageIndicator({
+    Key key,
+    @required this.slider,
+    @required int currentPage,
+  }) : _currentPage = currentPage, super(key: key);
+
+  final CarouselSlider slider;
+  final int _currentPage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        InkResponse(
+          radius: 0,
+          onTap: () {
+            slider.animateToPage(
+              0,
+              curve: pageChangeAnimationCurve,
+              duration: pageChangeAnimationDuration
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _currentPage == 0 ? Colors.white : Colors.grey,
+            ),
+            margin: EdgeInsets.only(right: 10),
+            height: 15,
+            width: 15,
+          ),
+        ),
+
+        InkResponse(
+          radius: 0,
+          onTap: () {
+            slider.animateToPage(
+              1,
+              curve: pageChangeAnimationCurve,
+              duration: pageChangeAnimationDuration
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: _currentPage == 1 ? Colors.white : Colors.grey,
+            ),
+            margin: EdgeInsets.only(right: 10),
+            height: 15,
+            width: 15,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class BottomButtonBar extends StatelessWidget {
   final CarouselSlider slider;
   final double bottomButtonBarHeight;
   final int currentPageIndex;
   final double buttonWidth = 150;
-
-  Duration pageChangeAnimationDuration = Duration(milliseconds: 250); 
-  Curve pageChangeAnimationCurve = Curves.linear;
 
   BottomButtonBar({
     Key key,
