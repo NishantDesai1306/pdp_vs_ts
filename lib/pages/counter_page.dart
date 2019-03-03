@@ -407,7 +407,10 @@ class DifferenceWidget extends StatelessWidget {
     if (difference == 0) {
       differenceText = tSeriesChannel.channelName + " and " + pewDiePieChannel.channelName + " has same number of subscribers";
 
-      return Text(differenceText);
+      return Text(
+        differenceText,
+        textAlign: TextAlign.center,
+      );
     }
     else if (difference > 0) {
       differenceText = pewDiePieChannel.channelName + " is ahead by";
@@ -429,6 +432,7 @@ class DifferenceWidget extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Container(
         child: Wrap(
+          alignment: WrapAlignment.center,
           children: <Widget>[
             Text(differenceText + " ", style: textStyle),
             Counter(value: difference, textStyle: textStyle),
