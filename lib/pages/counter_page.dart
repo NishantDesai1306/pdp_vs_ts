@@ -15,7 +15,6 @@ import "package:pdp_vs_ts/blocs/internet_connectivity/state.dart";
 import "package:pdp_vs_ts/models/youtube_channel.dart";
 import "package:pdp_vs_ts/widgets/counter.dart";
 import "package:pdp_vs_ts/constants/index.dart";
-import "package:pdp_vs_ts/pages/youtube_channel_details_page.dart";
 import "package:pdp_vs_ts/blocs/counter_page/bloc.dart";
 import "package:pdp_vs_ts/blocs/counter_page/state.dart";
 import "package:pdp_vs_ts/helpers/shared_preference_helper.dart";
@@ -353,18 +352,7 @@ class ChannelUI extends StatelessWidget {
 
                     this.counterPageBloc.addChannel(TSERIES_CHANNEL_ID);
                     this.counterPageBloc.addChannel(PEW_DIE_PIE_CHANNEL_ID);
-                  },
-                  onTap: () {
-                    Navigator.push(
-                      context, 
-                      new MaterialPageRoute(
-                        builder: (context) => new YoutubeChannelDetailsPage(
-                          youtubeChannel: youtubeChannel,
-                          description: youtubeChannel.channelId == TSERIES_CHANNEL_ID ? T_SERIES_DESCRIPTION : PEW_DIE_PIE_DECSRIPTION
-                        )
-                      )
-                    );
-                  },
+                  }
                 ),
               ),
             ),

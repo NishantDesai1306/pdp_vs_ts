@@ -63,11 +63,9 @@ class YoutubeAPI {
     String channelPicture = snippet['thumbnails']['high']['url'];
 
     int subscriberCount = await getSubscriberCount(channelId);
-    List<YoutubeVideo> videos = await getTopVideos(channelId);
     YoutubeChannel youtubeChannel = new YoutubeChannel(channelId, channelName, channelPicture);
 
     youtubeChannel.setSubscriberCount(subscriberCount);
-    youtubeChannel.setVideos(videos);
     youtubeChannel.writeToSharedPreferences();
 
     return youtubeChannel;
@@ -112,41 +110,5 @@ class YoutubeAPI {
     }
 
     return subscriberCount;
-  }
-
-  static Future<List<YoutubeVideo>> getTopVideos(channelId) async {
-    String url = "$YOUTUBE_API_URL/search?part=snippet&channelId=$channelId&maxResults=$VIDEO_LIST_SIZE&order=viewCount&key=$YOUTUBE_API_KEY&type=video";
-    Object headers = {"Accept": "application/json"};
-    print('inside '+ channelId);
-
-    List<YoutubeVideo> videos = [];
-
-    var response;
-    
-    try {
-      response = await http.get(url, headers: headers);
-    }
-    catch (e) {
-      print(e.toString());
-    }
-
-    if (response != null && response.statusCode == 200) {
-      String responseBody = response.body;
-      var responseJSON = json.decode(responseBody);
-      List videoDetails = responseJSON['items'];
-
-      videoDetails.forEach((videoDetail) {
-        String videoId = videoDetail['id']['videoId'];
-        var snippet = videoDetail['snippet'];
-        String videoTitle = snippet['title'];
-        String videoDescription = snippet['description'];
-        String videoThumbnailUrl = snippet['thumbnails']['high']['url'];
-        YoutubeVideo youtubeVideo = new YoutubeVideo(videoId, videoTitle, videoThumbnailUrl, videoDescription);
-        
-        videos.add(youtubeVideo);
-      });
-    }
-
-    return videos;
   }
 }
