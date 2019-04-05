@@ -435,11 +435,11 @@ class DifferenceWidget extends StatelessWidget {
           alignment: WrapAlignment.center,
           children: <Widget>[
             Text(differenceText + " ", style: textStyle),
-            Counter(value: difference, textStyle: textStyle),
-            Text(" subscribers.", style: textStyle),
-          ],
-        ),
-      ),
+            Counter(value: difference.abs(), textStyle: textStyle),
+            Text(" subscribers.", style: textStyle)
+          ]
+        )
+      )
     );
   }
 }
