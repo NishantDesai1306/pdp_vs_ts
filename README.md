@@ -1,8 +1,9 @@
 # pdp_vs_ts
 
-A new Flutter project.
+Flutter demo project which displays live Youtube subscriber count for PewDiePie and T-Series.
 
 ## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Make sure that you have installed flutter, if not then follow guide on https://flutter.dev/docs/get-started/install
+1. Clone repo
+2. open terminal in that repo
+3. run command `flutter run --release`

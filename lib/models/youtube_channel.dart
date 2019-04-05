@@ -1,6 +1,8 @@
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/widgets.dart';
 
 import "package:pdp_vs_ts/api/youtube_api.dart";
+import 'package:pdp_vs_ts/constants/index.dart';
 import 'package:pdp_vs_ts/helpers/shared_preference_helper.dart';
 import "package:pdp_vs_ts/models/youtube_video.dart";
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +23,11 @@ class YoutubeChannel {
   int get subscriberCount => _subscriberCount; 
 
   YoutubeChannel(this._channelId, this._channelName, this._channelPicture, [this._subscriberCount, this._videos]);
+
+  static Image getProfilePicture(String channelId, double dimension) {
+    String imageName = channelId == TSERIES_CHANNEL_ID ? TSERIES_IMAGE_PATH :PEWDIEPIE_IMAGE_PATH;
+    return Image.asset(imageName, height: dimension, width: dimension);
+  }
 
   static empty(channelId) {
     return new YoutubeChannel(channelId, null, null, null);

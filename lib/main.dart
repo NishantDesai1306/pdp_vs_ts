@@ -4,6 +4,7 @@ import 'package:pdp_vs_ts/blocs/internet_connectivity/bloc.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:pdp_vs_ts/constants/theme.dart';
 import 'package:pdp_vs_ts/pages/about_me.dart';
+import 'package:pdp_vs_ts/pages/app_explanation.dart';
 
 import 'package:pdp_vs_ts/pages/main_page.dart';
 import 'package:pdp_vs_ts/pages/splash_page.dart';
@@ -55,6 +56,7 @@ class MyAppState extends State<MyApp> {
             SplashPage.route: (BuildContext context) => SplashPage(),
             MainPage.route: (BuildContext context) => MainPage(),
             AboutMePage.route: (BuildContext context) => AboutMePage(),
+            AppExplanation.route: (BuildContext context) => AppExplanation(),
           }
         );
       }

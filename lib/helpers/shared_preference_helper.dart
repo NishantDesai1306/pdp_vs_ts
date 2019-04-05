@@ -22,4 +22,8 @@ class SharedPreferenceHelper {
   static String getDarkThemeKey() {
     return 'isDark';
   }
+
+  static String getAppExplanationKey() {
+    return 'isAppExplained';
+  }
 }
